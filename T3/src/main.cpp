@@ -1,6 +1,6 @@
 /**********************************************************************
 	
-  Camera with OpenGL
+  camera with OpenGL
 
   March, 13th, 2003
 
@@ -35,11 +35,15 @@ m/n : roll
 
 #include <GL/glut.h>
 #include "camera.h"
+#include "KeyBoard.cpp"
 
 
 #define ShowUpvector
+#define FPS 30
+#define DELTA_MILI_TIME (1000.0f/FPS) // tempo entre frames em milisecundos FIXO
 
-CCamera Camera;
+CCamera camera;
+KeyBoard keyBoard;
 
 
 void DrawNet(GLfloat size, GLint LinesX, GLint LinesZ){
@@ -80,11 +84,60 @@ void reshape(int x, int y){
 	glViewport(0,0,x,y);  //Use the whole window for rendering
 }
 
+void Update(){
+	if(keyBoard.a){
+		camera.RotateY(5.0);
+	}		
+	if(keyBoard.d){
+		camera.RotateY(-5.0);
+	}		
+	if(keyBoard.w){
+		camera.MoveForward( -0.1 ) ;
+	}		
+	if(keyBoard.s){
+		camera.MoveForward( 0.1 ) ;
+	}		
+	if(keyBoard.x){
+		camera.RotateX(5.0);
+	}		
+	if(keyBoard.y){
+		camera.RotateX(-5.0);
+	}		
+	if(keyBoard.c){
+		camera.StrafeRight(-0.1);
+	}		
+	if(keyBoard.v){
+		camera.StrafeRight(0.1);
+	}		
+	if(keyBoard.f){
+		camera.MoveUpward(-0.3);
+	}
+	if(keyBoard.r){
+		camera.MoveUpward(0.3);
+	}
+	if(keyBoard.m){
+		camera.RotateZ(-5.0);
+	}
+	if(keyBoard.n){
+		camera.RotateZ(5.0);
+	}
+}
+void idleEvent(int step) {
+	
+
+	glutTimerFunc((unsigned int)DELTA_MILI_TIME, idleEvent, step);
+	Update();
+
+	glutPostRedisplay();
+	
+}
+
 void Display(void){
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
 		
-	Camera.Render();
+	camera.Render();
 
 	//Draw the "world":
 	glTranslatef(0.0,-0.5,-6.0);
@@ -126,77 +179,26 @@ void Display(void){
 	glutSwapBuffers();
 
 }
-void KeyDown(unsigned char key, int x, int y)
-{
-	switch (key) 
-	{
-	case 27:		//ESC
-		exit(0);
-		break;
-	case 'a':		
-		Camera.RotateY(5.0);
-		Display();
-		break;
-	case 'd':		
-		Camera.RotateY(-5.0);
-		Display();
-		break;
-	case 'w':		
-		Camera.MoveForward( -0.1 ) ;
-		Display();
-		break;
-	case 's':		
-		Camera.MoveForward( 0.1 ) ;
-		Display();
-		break;
-	case 'x':		
-		Camera.RotateX(5.0);
-		Display();
-		break;
-	case 'y':		
-		Camera.RotateX(-5.0);
-		Display();
-		break;
-	case 'c':		
-		Camera.StrafeRight(-0.1);
-		Display();
-		break;
-	case 'v':		
-		Camera.StrafeRight(0.1);
-		Display();
-		break;
-	case 'f':
-		Camera.MoveUpward(-0.3);
-		Display();
-		break;
-	case 'r':
-		Camera.MoveUpward(0.3);
-		Display();
-		break;
-
-	case 'm':
-		Camera.RotateZ(-5.0);
-		Display();
-		break;
-	case 'n':
-		Camera.RotateZ(5.0);
-		Display();
-		break;
-
-	}
+void kd(unsigned char key, int x, int y){
+	keyBoard.KeyDown(key, x,y);
 }
 
-int main(int argc, char **argv)
-{
+void ku(unsigned char key, int x, int y){
+	keyBoard.KeyUp(key, x,y);
+}
+
+
+int main(int argc, char **argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(500,300);
-	glutCreateWindow("Camera");
-	Camera.Move( F3dVector(0.0, 0.0, 3.0 ));
-	Camera.MoveForward( 1.0 );
-	glutDisplayFunc(Display);
+	glutCreateWindow("camera");
+	camera.Move( F3dVector(0.0, 0.0, 3.0 ));
+	camera.MoveForward( 1.0 );
+	glutTimerFunc(0, idleEvent, 0);
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(KeyDown);
+	glutKeyboardFunc(kd);
+	glutKeyboardUpFunc(ku);
 	glutMainLoop();
 	return 0;             
 }
