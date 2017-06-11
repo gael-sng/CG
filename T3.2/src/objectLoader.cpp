@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include "vector3.hpp"
+#include "Vector3.hpp"
 #include <fstream>
 #include <string>
 
@@ -110,7 +110,7 @@ void display(void){
 	glutSwapBuffers(); //swap the buffers
 }
 
-int main(int argc,char **argv){
+int main2(int argc,char **argv){
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
 	glutInitWindowSize(800, 450);

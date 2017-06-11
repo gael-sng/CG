@@ -94,7 +94,7 @@ void myInit(){
 	cam = new Camera();
 
 	// Object 0 is a Teapot at (0, 0, 0).
-	objects[0].transform = new Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	objects[0].transform = new Transform(0.0, -1.0, -5.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0);
 	objects[0].type = TEAPOT;
 
 	// Creating other objects.
@@ -158,24 +158,11 @@ void processKeys(){
 	if(keys[ASCII_ESC]) glutDestroyWindow(g_WindowHandle), myCleanup(), exit(0);
 }
 
-void playerMove(){
-	Transform* t = objects[0].transform; 
-	t->position->x = cam->transform->position->x + (sin(TO_RAD * cam->transform->rotation->y) * CAMERA_DIST);
-	t->position->x = cam->transform->position->x - (cos(TO_RAD * cam->transform->rotation->y) * CAMERA_DIST);
-	t->position->x = cam->transform->position->x - (sin(TO_RAD * cam->transform->rotation->x) * CAMERA_DIST);
-	
-	t->rotation->x = cam->transform->rotation->x;
-	t->rotation->y = cam->transform->rotation->y;
-	t->rotation->z = cam->transform->rotation->z;
-}
-
 // GlutIdleFunc callback. Processes keys and redraw scene
 void Update(int step){
 	glutTimerFunc((unsigned int)DELTA_MILI_TIME, Update, step);
 	
 	processKeys();
-
-	playerMove();
 	
 	glutPostRedisplay();
 }
@@ -188,6 +175,12 @@ void Render(){
 	// Reset transformations
 	glLoadIdentity();
 
+	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform, true): drawTeapot(objects[i].transform, false);
+
+	selectedObject - TEAPOT == 0 ? drawTeapot(objects[0].transform, true): drawTeapot(objects[0].transform, false);
+
+	glLoadIdentity();
+
 	// Set the camera
 	cam->update();
 
@@ -195,7 +188,7 @@ void Render(){
     drawGround(-dist);
 
     // Draws scene objects
-    for(int i = 0; i < N_OBJECTS; i++){
+    for(int i = 1; i < N_OBJECTS; i++){
 
 		glPushMatrix();
 
