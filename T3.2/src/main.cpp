@@ -1,38 +1,38 @@
-/* Main source file
-
-	Giovanna Oliveira Guimarães		-	9293693
-	Lucas Alexandre Soares 			-	9293265
-	Rafael Augusto Monteiro 			-	9293095
-
+/*
+	Gabriel Simmel Nascimento - 9050232
+	Victor Luiz Roquete Forbes - 9293394
+	Marcos Cesar Ribeiro de Camargo - 9278045
+	José Augusto Noronha de Menezes Neto - 9293049
 */
 
-#include <math.h>
+#include <cmath>
 #include <GL/glut.h>
 
 #include "callbacks.hpp"
 
-int main(int argc, char *argv[]) {
+#define M 1400
+#define N 900
 
-	// Initializa my things 
+int main(int argc, char *argv[]) {
+	// Initializing camera and objects.
 	myInit();
 
-	// init GLUT and create window
+	// Initializing GLUT and Window.
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100,100);
-	glutInitWindowSize(1400, 900);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(M, N);
 	g_WindowHandle = glutCreateWindow("T3");
 
-	// register callbacks
+	// Callbacks.
 	glutDisplayFunc(Render);
 	glutReshapeFunc(changeSize);
-	glutTimerFunc(0,Update,0);
+	glutTimerFunc(0, Update, 0);
 	glutKeyboardFunc(keyboardDown);
 	glutKeyboardUpFunc(keyboardUp);
 	glutSpecialFunc(specialDown);
 	glutSpecialUpFunc(specialUp);
 
-	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
     
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 	// OpenGL init
 	glEnable(GL_DEPTH_TEST);
 
-	// enter GLUT event processing cycle
+	// Enter GLUT event processing cycle
 	glutMainLoop();
 
 	return 1;

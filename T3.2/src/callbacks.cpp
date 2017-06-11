@@ -1,4 +1,12 @@
-#include <math.h>
+/*
+	Gabriel Simmel Nascimento - 9050232
+	Victor Luiz Roquete Forbes - 9293394
+	Marcos Cesar Ribeiro de Camargo - 9278045
+	José Augusto Noronha de Menezes Neto - 9293049
+*/
+
+#include <cmath>
+#include <cstdlib>
 #include <GL/glut.h>
 
 #include "Vector3.hpp"
@@ -7,10 +15,11 @@
 #include "draw.hpp"
 #include "transform.hpp"
 
-//defining scene objects types
+// Defining scene objects types
 #define TEAPOT 0
 #define TORUS 1
 #define CUBE 2
+
 #define NEXT 1
 #define PREVIOUS -1
 
@@ -18,25 +27,20 @@
 #define CAMERA_DIST 4
 
 #define FPS 60
-#define DELTA_MILI_TIME (1000/FPS)// tempo entre frames em milisecundos FIXO
+#define DELTA_MILI_TIME (1000 / FPS)// tempo entre frames em milisecundos FIXO
 
-
-
-#define TO_RAD (M_PI/180.0)
-
-
+#define TO_RAD (M_PI / 180.0)
 
 typedef int OBJECT_TYPE;
 
 /* Each scene object contains a reference to it's transform properties
-and a OBJECT_TYPE, which is used to call the correct drawing function defined in draw.hpp*/
-typedef struct _sceneObject{
-	Transform* transform;
+and a OBJECT_TYPE, which is used to call the correct drawing function defined in draw.hpp */
+struct sceneObject{
+	Transform *transform;
 	OBJECT_TYPE type;
-} sceneObject;
+};
 
-enum ascii_codes {
-
+enum ascii_codes{
 	ASCII_NUL,
 	ASCII_SOH,
 	ASCII_STX,
@@ -77,64 +81,46 @@ int selectedObject = 0; // object that will handle transformations
 bool keys[255] = {0}; // keypress state
 bool skeys[255] = {0}; // special keypress state
 
-Camera* cam;
+Camera *cam;
 
 //list of scene objects.
 sceneObject objects[N_OBJECTS];
 double dist = 9.0f;
+
 void myInit(){
+	double x, y, z;
+	int i, j;
 
 	cam = new Camera();
 
-	//object 1 is a Torus located in (0,0,0)
-	objects[0].transform = new Transform(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	// Object 0 is a Teapot at (0, 0, 0).
+	objects[0].transform = new Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 	objects[0].type = TEAPOT;
 
-	//object 1 is a Torus located in (0,0,0)
-	objects[1].transform = new Transform(dist, dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[1].type = CUBE;
+	// Creating other objects.
+	for (i = 0; i < (1 << 3); i++){
+		x = ((1 << 0) & i) ? dist : -dist;
+		y = ((1 << 1) & i) ? dist : -dist;
+		z = ((1 << 2) & i) ? dist : -dist;
 
-	//object 1 is a Torus located in (0,0,0)
-	objects[2].transform = new Transform(-dist, dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[2].type = TORUS;
-
-	//object 1 is a Torus located in (0,0,0)
-	objects[3].transform = new Transform(dist, -dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[3].type = CUBE;
-
-	//object 1 is a Torus located in (0,0,0)
-	objects[4].transform = new Transform(dist, dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[4].type = TORUS;
-
-	//object 1 is a Torus located in (0,0,0)
-	objects[5].transform = new Transform(-dist, -dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[5].type = CUBE;
-
-	//object 1 is a Torus located in (0,0,0)
-	objects[6].transform = new Transform(dist, -dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[6].type = TORUS;
-	
-	//object 1 is a Torus located in (0,0,0)
-	objects[7].transform = new Transform(-dist, dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[7].type = CUBE;
-	
-	//object 1 is a Torus located in (0,0,0)
-	objects[8].transform = new Transform(-dist, -dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	objects[8].type = TORUS;
-
+		objects[i + 1].transform = new Transform(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+		objects[i + 1].type = (rand() % 2) + 1;
+	}
 }
 
 // function that deletes "camera" and "sceneObject" objects
 void myCleanup(){
+	int i;
+
 	delete cam;
 
-	for(int i = 0; i < 3; i++){
+	for (i = 0; i < 3; i++){
 		delete objects[i].transform;
 	}
 }
 
 // function that processes normal button presses (such as 'w', 'a', 's' and 'd')
-void processKeys() {
+void processKeys(){
 
 	// Movement
 	if(keys['w']){
@@ -195,8 +181,7 @@ void Update(int step){
 }
 
 // GlutDisplayFunc callback. Clears screen and draws the scene
-void Render(void) {
-
+void Render(){
 	// Clear Color and Depth Buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
