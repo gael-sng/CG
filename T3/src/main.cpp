@@ -195,6 +195,7 @@ int main(int argc, char **argv){
 	glutCreateWindow("camera");
 	camera.Move( F3dVector(0.0, 0.0, 3.0 ));
 	camera.MoveForward( 1.0 );
+	glutDisplayFunc(Display);
 	glutTimerFunc(0, idleEvent, 0);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(kd);
