@@ -1,6 +1,14 @@
+/*
+	Gabriel Simmel Nascimento - 9050232
+	Victor Luiz Roquete Forbes - 9293394
+	Marcos Cesar Ribeiro de Camargo - 9278045
+	José Augusto Noronha de Menezes Neto - 9293049
+*/
+
 #pragma once
 
 #include "transform.hpp"
+#include "Vector3.hpp"
 
 #define GROUND_LEVEL 1.0
 
@@ -10,7 +18,7 @@
 
 class Camera{
 public:
-	double speed, gravity;
+	double speed, rspeed, gravity;
 	Transform *transform;
 
 	Camera();
