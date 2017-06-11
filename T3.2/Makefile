@@ -1,5 +1,5 @@
 # Project name
-NAME=FreeGluteos3D
+NAME=CG_T3
 
 
 # Directories

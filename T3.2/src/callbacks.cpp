@@ -13,6 +13,10 @@
 #define NEXT 1
 #define PREVIOUS -1
 
+#define FPS 60
+#define DELTA_MILI_TIME (1000/FPS)// tempo entre frames em milisecundos FIXO
+
+
 typedef int OBJECT_TYPE;
 
 /* Each scene object contains a reference to it's transform properties
@@ -141,15 +145,16 @@ void processKeys() {
 }
 
 // GlutIdleFunc callback. Processes keys and redraw scene
-void Update(void){
-
+void Update(int step){
+	glutTimerFunc((unsigned int)DELTA_MILI_TIME, Update, step);
+	
 	processKeys();
 	
 	glutPostRedisplay();
 }
 
 // GlutDisplayFunc callback. Clears screen and draws the scene
-void Draw(void) {
+void Render(void) {
 
 	// Clear Color and Depth Buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

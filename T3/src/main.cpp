@@ -84,7 +84,7 @@ void reshape(int x, int y){
 	glViewport(0,0,x,y);  //Use the whole window for rendering
 }
 
-void Update(){
+void Update2(){
 	if(keyBoard.a){
 		camera.RotateY(5.0);
 	}		
@@ -122,11 +122,11 @@ void Update(){
 		camera.RotateZ(5.0);
 	}
 }
-void idleEvent(int step) {
+void Update(int step) {
 	
 
-	glutTimerFunc((unsigned int)DELTA_MILI_TIME, idleEvent, step);
-	Update();
+	glutTimerFunc((unsigned int)DELTA_MILI_TIME, Update, step);
+	Update2();
 
 	glutPostRedisplay();
 	
@@ -196,7 +196,7 @@ int main(int argc, char **argv){
 	camera.Move( F3dVector(0.0, 0.0, 3.0 ));
 	camera.MoveForward( 1.0 );
 	glutDisplayFunc(Display);
-	glutTimerFunc(0, idleEvent, 0);
+	glutTimerFunc(0, Update, 0);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(kd);
 	glutKeyboardUpFunc(ku);

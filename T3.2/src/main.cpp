@@ -24,9 +24,9 @@ int main(int argc, char *argv[]) {
 	g_WindowHandle = glutCreateWindow("T3");
 
 	// register callbacks
-	glutDisplayFunc(renderScene);
+	glutDisplayFunc(Render);
 	glutReshapeFunc(changeSize);
-	glutIdleFunc(update);
+	glutTimerFunc(0,Update,0);
 	glutKeyboardFunc(keyboardDown);
 	glutKeyboardUpFunc(keyboardUp);
 	glutSpecialFunc(specialDown);
