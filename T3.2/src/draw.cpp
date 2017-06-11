@@ -65,20 +65,20 @@ void drawSky(){
 	glutSolidTeapot(70.0f);
 }
 
-void drawGround(){
+void drawGround(double hight){
 	glBegin(GL_QUADS);
 
 	glColor3f(255.0f, 255.0f, 255.0f);
-	glVertex3f(-30.0f, 0.0f, -30.0f);
+	glVertex3f(-30.0f, hight, -30.0f);
 
 	glColor3f(255.0f, 0.0f, 255.0f);
-	glVertex3f(-30.0f, 0.0f,  30.0f);
+	glVertex3f(-30.0f, hight,  30.0f);
 
 	glColor3f(255.0f, 255.0f, 0.0f);
-	glVertex3f( 30.0f, 0.0f,  30.0f);
+	glVertex3f( 30.0f, hight,  30.0f);
 
 	glColor3f(0.0f, 255.0f, 255.0f);
-	glVertex3f( 30.0f, 0.0f, -30.0f);
+	glVertex3f( 30.0f, hight, -30.0f);
 
 	glEnd();
 

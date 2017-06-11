@@ -1,10 +1,11 @@
 #include <math.h>
 #include <GL/glut.h>
 
-#include "vector3.hpp"
+#include "Vector3.hpp"
 #include "camera.hpp"
 #include "callbacks.hpp"
 #include "draw.hpp"
+#include "transform.hpp"
 
 //defining scene objects types
 #define TEAPOT 0
@@ -13,8 +14,16 @@
 #define NEXT 1
 #define PREVIOUS -1
 
+#define N_OBJECTS 9
+#define CAMERA_DIST 4
+
 #define FPS 60
 #define DELTA_MILI_TIME (1000/FPS)// tempo entre frames em milisecundos FIXO
+
+
+
+#define TO_RAD (M_PI/180.0)
+
 
 
 typedef int OBJECT_TYPE;
@@ -71,29 +80,48 @@ bool skeys[255] = {0}; // special keypress state
 Camera* cam;
 
 //list of scene objects.
-sceneObject objects[3];
-
+sceneObject objects[N_OBJECTS];
+double dist = 9.0f;
 void myInit(){
 
 	cam = new Camera();
 
-	//object 0 is a Teapot located in (5,0,0)
-	objects[0].transform = new Transform(0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f);
+	//object 1 is a Torus located in (0,0,0)
+	objects[0].transform = new Transform(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	objects[0].type = TEAPOT;
 
 	//object 1 is a Torus located in (0,0,0)
-	objects[1].transform = new Transform(0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f);
-	objects[1].type = TORUS;
+	objects[1].transform = new Transform(dist, dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[1].type = CUBE;
 
-	//object 2 is a Cube located in (-5,0,0)
-	objects[2].transform = new Transform(-5.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f);
-	objects[2].type = CUBE;
+	//object 1 is a Torus located in (0,0,0)
+	objects[2].transform = new Transform(-dist, dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[2].type = TORUS;
+
+	//object 1 is a Torus located in (0,0,0)
+	objects[3].transform = new Transform(dist, -dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[3].type = CUBE;
+
+	//object 1 is a Torus located in (0,0,0)
+	objects[4].transform = new Transform(dist, dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[4].type = TORUS;
+
+	//object 1 is a Torus located in (0,0,0)
+	objects[5].transform = new Transform(-dist, -dist, dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[5].type = CUBE;
+
+	//object 1 is a Torus located in (0,0,0)
+	objects[6].transform = new Transform(dist, -dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[6].type = TORUS;
+	
+	//object 1 is a Torus located in (0,0,0)
+	objects[7].transform = new Transform(-dist, dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[7].type = CUBE;
+	
+	//object 1 is a Torus located in (0,0,0)
+	objects[8].transform = new Transform(-dist, -dist, -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	objects[8].type = TORUS;
+
 }
 
 // function that deletes "camera" and "sceneObject" objects
@@ -144,11 +172,24 @@ void processKeys() {
 	if(keys[ASCII_ESC]) glutDestroyWindow(g_WindowHandle), myCleanup(), exit(0);
 }
 
+void playerMove(){
+	Transform* t = objects[0].transform; 
+	t->position->x = cam->transform->position->x + (sin(TO_RAD * cam->transform->rotation->y) * CAMERA_DIST);
+	t->position->x = cam->transform->position->x - (cos(TO_RAD * cam->transform->rotation->y) * CAMERA_DIST);
+	t->position->x = cam->transform->position->x - (sin(TO_RAD * cam->transform->rotation->x) * CAMERA_DIST);
+	
+	t->rotation->x = cam->transform->rotation->x;
+	t->rotation->y = cam->transform->rotation->y;
+	t->rotation->z = cam->transform->rotation->z;
+}
+
 // GlutIdleFunc callback. Processes keys and redraw scene
 void Update(int step){
 	glutTimerFunc((unsigned int)DELTA_MILI_TIME, Update, step);
 	
 	processKeys();
+
+	playerMove();
 	
 	glutPostRedisplay();
 }
@@ -166,10 +207,10 @@ void Render(void) {
 	cam->update();
 
     // Draw ground
-    drawGround();
+    drawGround(-dist);
 
     // Draws scene objects
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < N_OBJECTS; i++){
 
 		glPushMatrix();
 

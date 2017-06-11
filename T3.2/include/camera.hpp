@@ -1,6 +1,7 @@
 #pragma once
 
 #include "transform.hpp"
+#include "Vector3.hpp"
 
 #define GROUND_LEVEL 1.0
 
