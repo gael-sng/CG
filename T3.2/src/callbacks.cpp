@@ -1,11 +1,3 @@
-/* Camera source file
-
-	Giovanna Oliveira Guimarães		-	9293693
-	Lucas Alexandre Soares 			-	9293265
-	Rafael Augusto Monteiro 			-	9293095
-
-*/
-
 #include <math.h>
 #include <GL/glut.h>
 
@@ -82,7 +74,7 @@ void myInit(){
 	cam = new Camera();
 
 	//object 0 is a Teapot located in (5,0,0)
-	objects[0].transform = new Transform(5.0f, 0.0f, 0.0f,
+	objects[0].transform = new Transform(0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f);
 	objects[0].type = TEAPOT;
@@ -109,8 +101,25 @@ void myCleanup(){
 	}
 }
 
-// function that processes special key buttons (such as arrows)
-void processSpecialKeys() {
+// function that processes normal button presses (such as 'w', 'a', 's' and 'd')
+void processKeys() {
+
+	// Movement
+	if(keys['w']){
+		cam->moveFoward();
+	}
+	
+	if(keys['s']){
+		cam->moveBack();
+	}
+	
+	if(keys['a']){
+		cam->moveLeft();
+	}
+	
+	if(keys['d']){
+		cam->moveRight();
+	}
 
 	if(skeys[GLUT_KEY_UP]){
 		cam->pitchUp();
@@ -121,102 +130,26 @@ void processSpecialKeys() {
 	}
 	
 	if(skeys[GLUT_KEY_LEFT]){
-		cam->yawLeft();
+		cam->lookLeft();
 	}
 	
 	if(skeys[GLUT_KEY_RIGHT]){
-		cam->yawRight();
+		cam->lookRight();
 	}
-}
-
-void selectObject(int which){
-	selectedObject += which;
-	if(selectedObject > 2) selectedObject = 0;
-	if(selectedObject < 0) selectedObject = 2;
-}
-
-// function that processes normal button presses (such as 'w', 'a', 's' and 'd')
-void processKeys() {
-
-	// Movement
-	if(keys['w']){
-		cam->zoomIn();
-	}
-	
-	if(keys['s']){
-		cam->zoomOut();
-	}
-	
-	if(keys['a']){
-		cam->strafeLeft();
-	}
-	
-	if(keys['d']){
-		cam->strafeRight();
-	}
-
-	//increases camera speed when plus is pressed
-	if(keys['=']) {
-		cam->speed += 0.02f;
-		if(cam->speed > 2.0f)
-			cam->speed = 2.0f;
-	}
-	//decreases camera speed when minus is pressed 
-	if(keys['-']) {
-		cam->speed -= 0.02f;
-		if(cam->speed < 0.01f)
-			cam->speed = 0.01f;
-	}
-
-	// translate right
-	if(keys['i']){
-		objects[selectedObject].transform->position->x += 0.3f;
-	}
-
-	// translate left
-	if(keys['u']){
-		objects[selectedObject].transform->position->x -= 0.3f;
-	}
-
-	// rotate right
-	if(keys['k']){
-		objects[selectedObject].transform->rotation->x += 10.0f;
-	}
-
-	// rotate left
-	if(keys['j']){
-		objects[selectedObject].transform->rotation->x -= 10.0f;
-	}
-
-	// scale up
-	if(keys['m']){
-		objects[selectedObject].transform->scale->x += 0.1f;
-		objects[selectedObject].transform->scale->y += 0.1f;
-		objects[selectedObject].transform->scale->z += 0.1f;
-	}
-
-	// scale down
-	if(keys['n']){
-		objects[selectedObject].transform->scale->x -= 0.1f;
-		objects[selectedObject].transform->scale->y -= 0.1f;
-		objects[selectedObject].transform->scale->z -= 0.1f;
-	}
-
 	// Cleanup glut before exiting
 	if(keys[ASCII_ESC]) glutDestroyWindow(g_WindowHandle), myCleanup(), exit(0);
 }
 
 // GlutIdleFunc callback. Processes keys and redraw scene
-void update(void){
+void Update(void){
 
 	processKeys();
-	processSpecialKeys();
-
+	
 	glutPostRedisplay();
 }
 
 // GlutDisplayFunc callback. Clears screen and draws the scene
-void renderScene(void) {
+void Draw(void) {
 
 	// Clear Color and Depth Buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -288,28 +221,7 @@ void changeSize(int w, int h) {
 
 // sets key presses when some key is pressed
 void keyboardUp(unsigned char key, int x, int y){ keys[key] = false; }
-void keyboardDown(unsigned char key, int x, int y){
-	switch(key){
-
-		case 't':
-			selectObject(PREVIOUS);
-			break;
-
-		case 'y':
-			selectObject(NEXT);
-			break;
-
-		case ' ':
-			myCleanup();
-			myInit();
-			selectedObject = 0;
-			break;
-			
-		default:
-			keys[key] = true;
-			break;
-	}
-}
+void keyboardDown(unsigned char key, int x, int y){keys[key] = true; }
 
 void specialUp(int key, int x, int y){ skeys[key] = false; }
 void specialDown(int key, int x, int y){ skeys[key] = true; }

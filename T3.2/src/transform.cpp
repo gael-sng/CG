@@ -14,12 +14,6 @@ Transform::Transform() {
 	this->scale = new Vector3(0.0f, 0.0f, 0.0f);
 }
 
-Transform::Transform(Vector3& position, Vector3& rotation, Vector3& scale){
-
-	this->position = new Vector3(position);
-	this->rotation = new Vector3(rotation);
-	this->scale = new Vector3(scale);
-}
 
 Transform::Transform(Vector3 *position, Vector3 *rotation, Vector3 *scale){
 
@@ -28,9 +22,9 @@ Transform::Transform(Vector3 *position, Vector3 *rotation, Vector3 *scale){
 	this->scale = new Vector3(scale);
 }
 
-Transform::Transform(float px, float py, float pz, 
-					float rx, float ry, float rz, 
-					float sx, float sy, float sz){
+Transform::Transform(double px, double py, double pz, 
+					double rx, double ry, double rz, 
+					double sx, double sy, double sz){
 
 	this->position = new Vector3(px, py, pz);
 	this->rotation = new Vector3(rx, ry, rz);

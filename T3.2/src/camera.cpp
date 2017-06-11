@@ -1,104 +1,72 @@
-/* Camera source file
-
-	Giovanna Oliveira Guimarães		-	9293693
-	Lucas Alexandre Soares 			-	9293265
-	Rafael Augusto Monteiro 			-	9293095
-
-*/
-
 #include <math.h>
 #include <GL/glut.h>
 
 #include "camera.hpp"
 
 Camera::Camera(){
-
 	speed = 0.3f;
 	gravity = 0.098f;
 
-	transform = new Transform(new Vector3(0.0f, GROUND_LEVEL, 15.0f),
-							new Vector3(0.0f, 0.0f, 0.0f),
-							new Vector3(1.0f, 1.0f, 1.0f));
+	transform = new Transform(new Vector3(0.0, GROUND_LEVEL, 15.0), new Vector3(0.0, 0.0, 0.0), new Vector3(1.0, 1.0, 1.0));
 }
 
 Camera::~Camera(){
 	delete transform;
 }
 
-void Camera::checkHeight(){
-	if(transform->position->y < GROUND_LEVEL){
-		transform->position->y = GROUND_LEVEL;
-	}
+
+void Camera::update(){
+    glRotated(transform->rotation->x, 1.0, 0.0, 0.0);  //rotate our camera on the  x-axis (left and right)
+    glRotated(transform->rotation->y, 0.0, 1.0, 0.0);  //rotate our camera on the  y-axis (up and down)
+    glRotated(transform->rotation->z, 0.0, 0.0, 1.0);  //rotate our camera on the  z-axis (dunno)
+    glTranslated(-transform->position->x, -transform->position->y, -transform->position->z); //translate the screen to the position of our camera
 }
 
-void Camera::update() {
-	
-    glRotatef(transform->rotation->x, 1.0f, 0.0f, 0.0);  //rotate our camera on the  x-axis (left and right)
-    glRotatef(transform->rotation->y, 0.0f, 1.0f, 0.0);  //rotate our camera on the  y-axis (up and down)
-    glRotatef(transform->rotation->z, 0.0f, 0.0f, 1.0);  //rotate our camera on the  z-axis (dunno)
-    glTranslated(-transform->position->x,
-				 -transform->position->y,
-				 -transform->position->z); //translate the screen to the position of our camera
-    
+double to_rad(double theta){
+	return (theta * M_PI) / 180.0;
 }
 
-void Camera::zoomIn(){
-	float rotxrad, rotyrad;
-	rotyrad = (transform->rotation->y / 180.0f * M_PI);
-	rotxrad = (transform->rotation->x / 180.0f * M_PI); 
-	transform->position->x += float(sin(rotyrad)) * speed;
-	transform->position->z -= float(cos(rotyrad)) * speed;
-	transform->position->y -= float(sin(rotxrad)) * speed;
-	checkHeight();
+void Camera::moveFoward(){
+	transform->position->x += sin(to_rad(transform->rotation->y)) * speed;
+	transform->position->z -= cos(to_rad(transform->rotation->y)) * speed;
+	transform->position->y -= sin(to_rad(transform->rotation->x)) * speed;
 }
 
-void Camera::zoomOut(){
-	float rotxrad, rotyrad;
-	rotyrad = (transform->rotation->y / 180.0f * M_PI);
-	rotxrad = (transform->rotation->x / 180.0f * M_PI); 
-	transform->position->x -= float(sin(rotyrad))* speed;
-	transform->position->z += float(cos(rotyrad))* speed;
-	transform->position->y += float(sin(rotxrad))* speed;
-	checkHeight();
+void Camera::moveBack(){
+	transform->position->x -= sin(to_rad(transform->rotation->y)) * speed;
+	transform->position->z += cos(to_rad(transform->rotation->y)) * speed;
+	transform->position->y += sin(to_rad(transform->rotation->x)) * speed;
 }
 
-void Camera::strafeRight(){
-	float rotyrad;
-	rotyrad = (transform->rotation->y / 180.0f * M_PI);
-	transform->position->x += float(cos(rotyrad)) * speed;
-	transform->position->z += float(sin(rotyrad)) * speed;
-	checkHeight();
+void Camera::moveRight(){
+	transform->position->x += cos(to_rad(transform->rotation->y)) * speed;
+	transform->position->z += sin(to_rad(transform->rotation->y)) * speed;
 }
 
-void Camera::strafeLeft(){
-	float rotyrad;
-	rotyrad = (transform->rotation->y / 180.0f * M_PI);
-	transform->position->x -= float(cos(rotyrad)) * speed;
-	transform->position->z -= float(sin(rotyrad)) * speed;
-	checkHeight();
+void Camera::moveLeft(){
+	transform->position->x -= cos(to_rad(transform->rotation->y)) * speed;
+	transform->position->z -= sin(to_rad(transform->rotation->y)) * speed;
 }
 
-void Camera::yawLeft(){
+void Camera::lookLeft(){
     transform->rotation->y -= 1.0f;
 }
 
-void Camera::yawRight(){
+void Camera::lookRight(){
     transform->rotation->y += 1.0f;
 }
 
 void Camera::pitchUp(){
     transform->rotation->x -= 1.0f;
-    checkPitch();
+    checkRotation();
 }
 
 void Camera::pitchDown(){
     transform->rotation->x += 1.0f;
-    checkPitch();
+    checkRotation();
 }
 
-void Camera::checkPitch(){
+void Camera::checkRotation(){
 	if(transform->rotation->x > 90) transform->rotation->x = 90;
-	if(transform->rotation->x < -90) transform->rotation->x = 90;
+	if(transform->rotation->x < -90) transform->rotation->x = -90;
 }
-
-

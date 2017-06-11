@@ -1,32 +1,13 @@
-/* Transform header file
-
-	Giovanna Oliveira Guimarães		-	9293693
-	Lucas Alexandre Soares 			-	9293265
-	Rafael Augusto Monteiro 			-	9293095
-
-*/
-
-#ifndef _TRANSFORM_HPP_
-#define _TRANSFORM_HPP_
+#pragma once
 
 #include "vector3.hpp"
 
-class Transform {
-
+class Transform{
 public:
-
-	Vector3 *position;
-	Vector3 *rotation;
-	Vector3 *scale;
+	Vector3 *position, *rotation, *scale;
 
 	Transform();
-	Transform(Vector3& position, Vector3& rotation, Vector3& scale);
 	Transform(Vector3 *position, Vector3 *rotation, Vector3 *scale);
-	Transform(float px, float py, float pz, 
-					float rx, float ry, float rz, 
-					float sx, float sy, float sz);
+	Transform(double px, double py, double pz, double rx, double ry, double rz, double sx, double sy, double sz);
 	virtual ~Transform();
 };
-
-#endif
-

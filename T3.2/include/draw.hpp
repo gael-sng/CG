@@ -1,5 +1,4 @@
-#ifndef _DRAW_HPP_
-#define _DRAW_HPP_
+#pragma once
 
 #include "transform.hpp"
 
@@ -8,5 +7,3 @@ void drawTorus(Transform* torus, bool selected);
 void drawCube(Transform* cube, bool selected);
 void drawGround();
 void drawTeapot(Transform* teapot, bool selected);
-
-#endif
