@@ -33,7 +33,7 @@ OBJ=$(OBJC) $(OBJCPP)
 
 
 CC=g++
-CFLAGS=-O3 -I./$(INCDIR) 
+CFLAGS=-O2 -I./$(INCDIR) 
 
 USER_LIBS=-lGL -lglut -lGLU
 DEFAULT_LIBS=-lm

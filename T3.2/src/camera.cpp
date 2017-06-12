@@ -13,10 +13,13 @@
 
 using namespace std;
 
+double to_rad(double theta){
+	return (theta * M_PI) / 180.0;
+}
+
 Camera::Camera(){
 	this->speed = 0.3;
 	this->rspeed = 1.5;
-	this->gravity = 0.098;
 	this->transform = new Transform(new Vector3(0.0, GROUND_LEVEL, 15.0), new Vector3(0.0, 0.0, 0.0), new Vector3(1.0, 1.0, 1.0));
 }
 
@@ -29,10 +32,6 @@ void Camera::update(){
     glRotated(this->transform->rotation->y, 0.0, 1.0, 0.0);  // Rotate the camera around the y-axis.
     glRotated(this->transform->rotation->z, 0.0, 0.0, 1.0);  // Rotate the camera around the z-axis.
     glTranslated(-this->transform->position->x, -this->transform->position->y, -this->transform->position->z); // Translate the screen to the camera position.
-}
-
-double to_rad(double theta){
-	return (theta * M_PI) / 180.0;
 }
 
 void Camera::moveFoward(){

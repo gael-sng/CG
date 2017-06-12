@@ -12,13 +12,9 @@
 
 #define GROUND_LEVEL 1.0
 
-#define X 0
-#define Y 1
-#define Z 2
-
 class Camera{
 public:
-	double speed, rspeed, gravity;
+	double speed, rspeed;
 	Transform *transform;
 
 	Camera();

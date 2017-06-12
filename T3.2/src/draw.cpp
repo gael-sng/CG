@@ -5,48 +5,44 @@
 	José Augusto Noronha de Menezes Neto - 9293049
 */
 
-#include <math.h>
+#include <cmath>
 #include <GL/glut.h>
 
 #include "draw.hpp"
 
 #include "bibutil.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
-#define HIGHLIGHTED 0.7f, 0.3f, 1.0f
-#define NOT_HIGHLIGHTED 0.2f, 0.2f, 0.2f
+#define PLAYER 0.7, 0.3, 1.0
+#define SECONDARY_OBJECT 0.2, 0.2, 0.2
 
 GLfloat angle, fAspect;
 GLfloat rotX, rotY, rotX_ini, rotY_ini;
 GLfloat obsX, obsY, obsZ, obsX_ini, obsY_ini, obsZ_ini;
-int x_ini,y_ini,bot;
-
+int x_ini, y_ini, bot;
 
 // Color
-GLfloat color[] = {0.0f, 0.0f, 0.0f, 1.0f};
+GLfloat color[] = {1.0f, 1.2f, 1.3f, 1.0f};
 
 void applyTransform(Transform *obj){
-	glTranslatef(obj->position->x, obj->position->y + 0.7, obj->position->z);
-	glScalef(obj->scale->x + 1.0, obj->scale->y + 1.0, obj->scale->z + 1.0);
+	glTranslated(obj->position->x, obj->position->y + 0.7, obj->position->z);
+	glScaled(obj->scale->x + 1.0, obj->scale->y + 1.0, obj->scale->z + 1.0);
 
-	glRotatef(obj->rotation->x, 1.0f, 0.0f, 0.0f);
-	glRotatef(obj->rotation->y, 0.0f, 1.0f, 0.0f);
-	glRotatef(obj->rotation->z, 0.0f, 0.0f, 1.0f);
+	glRotated(obj->rotation->x, 1.0f, 0.0f, 0.0f);
+	glRotated(obj->rotation->y, 0.0f, 1.0f, 0.0f);
+	glRotated(obj->rotation->z, 0.0f, 0.0f, 1.0f);
 }
 
-void drawTorus(Transform *torus, bool selected){
+void drawTorus(Transform *torus){
 	applyTransform(torus);
 
 	glNormal3d(0, 1, 0);
-	color[0] = 1.0;
-	color[1] = 1.2;
-	color[2] = 1.3;
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
 
-	glRotatef(90.0, 1.0, 0.0, 0.0);
+	glRotated(90.0, 1.0, 0.0, 0.0);
 
-	selected ? glColor3f(HIGHLIGHTED) : glColor3f(NOT_HIGHLIGHTED);
+	glColor3f(SECONDARY_OBJECT);
 	glutSolidTorus(0.4, 0.7, 20.0, 20.0);
 }
 
@@ -54,18 +50,15 @@ void drawCube(Transform *cube, bool selected){
 	applyTransform(cube);
 
 	glNormal3d(0, 1, 0);
-	color[0] = 1.0;
-	color[1] = 1.2;
-	color[2] = 1.3;
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
 
-	selected ? glColor3f(HIGHLIGHTED) : glColor3f(NOT_HIGHLIGHTED);
+	glColor3f(SECONDARY_OBJECT);
 	glutSolidCube(1.5);
 }
 
 void drawSky(){
 	glColor3f(0.0, 0.0, 1.0);
-	glutSolidTeapot(70.0);
+	glutSolidSphere(50.0, 100, 100);
 }
 
 void drawGround(double height){
@@ -88,22 +81,20 @@ void drawGround(double height){
 	drawSky();
 }
 
-void drawTeapot(Transform *teapot, bool selected){
+void drawTeapot(Transform *teapot){
 	glPushMatrix();
 
 	// Apllies transformations
 	applyTransform(teapot);
 
 	// Draws obj
-	selected? glColor3f(HIGHLIGHTED): glColor3f(NOT_HIGHLIGHTED);
+	glColor3f(SECONDARY_OBJECT);
 	glutSolidTeapot(0.7f);
 
 	glPopMatrix();
 }
 
 
-
-// ------------------------------ objeto -------------------
 
 // Apontador para objeto
 OBJ *objeto;
@@ -140,7 +131,7 @@ void Inicializa (void){
 	//gets(nomeArquivo);
 
 	// Carrega o objeto 3D
-	objeto = CarregaObjeto("data/aviao.obj", true);
+	objeto = CarregaObjeto((char *)"data/aviao.obj", true);
     printf("Objeto carregado!");
 
 	// E calcula o vetor normal em cada face
@@ -180,14 +171,14 @@ void DefineIluminacao (void){
 }
 
 
-void drawAirplane(Transform *airplane, bool selected){
+void drawAirplane(Transform *airplane){
 	glPushMatrix();
 
 	// Apllies transformations
 	applyTransform(airplane);
 
 	// Draws obj
-	selected? glColor3f(HIGHLIGHTED): glColor3f(NOT_HIGHLIGHTED);
+	glColor3f(PLAYER);
 	DesenhaObjeto(objeto);
 
 	glPopMatrix();

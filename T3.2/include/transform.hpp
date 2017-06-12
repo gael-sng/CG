@@ -14,7 +14,7 @@ public:
 	Vector3 *position, *rotation, *scale;
 
 	Transform();
-	Transform(Vector3 *position, Vector3 *rotation, Vector3 *scale);
-	Transform(double px, double py, double pz, double rx, double ry, double rz, double sx, double sy, double sz);
+	Transform(Vector3 *, Vector3 *, Vector3 *);
+	Transform(double, double, double, double, double, double, double, double, double);
 	virtual ~Transform();
 };
