@@ -94,7 +94,7 @@ void myInit(){
 	cam = new Camera();
 
 	// Object 0 is a Teapot at (0, 0, 0).
-	objects[0].transform = new Transform(0.0, -1.0, -5.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0);
+	objects[0].transform = new Transform(0.0, -1.0, -5.0, 0.0, 180.0, 0.0, -0.9, -0.9, -0.9);
 	objects[0].type = TEAPOT;
 
 	// Creating other objects.
@@ -177,8 +177,8 @@ void Render(){
 
 	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform, true): drawTeapot(objects[i].transform, false);
 
-	selectedObject - TEAPOT == 0 ? drawTeapot(objects[0].transform, true): drawTeapot(objects[0].transform, false);
-
+	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[0].transform, true): drawTeapot(objects[0].transform, false);
+	drawAirplane(objects[0].transform, true);
 	glLoadIdentity();
 
 	// Set the camera

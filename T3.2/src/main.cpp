@@ -42,6 +42,9 @@ int main(int argc, char *argv[]) {
 	// OpenGL init
 	glEnable(GL_DEPTH_TEST);
 
+	// Carrega objeto
+	Inicializa();
+
 	// Enter GLUT event processing cycle
 	glutMainLoop();
 

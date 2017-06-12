@@ -19,3 +19,7 @@ void keyboardUp(unsigned char, int, int);
 void keyboardDown(unsigned char, int, int);
 void specialUp(int, int, int);
 void specialDown(int, int, int);
+
+void Inicializa (void);
+void DefineIluminacao (void);
+void desenha_aviao();
