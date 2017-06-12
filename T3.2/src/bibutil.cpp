@@ -23,8 +23,9 @@
 //
 //*****************************************************
 
-#include <math.h>
-#include <string.h>
+#include <cmath>
+#include <cstring>
+#include <cassert>
 #include <vector>
 #include "bibutil.h"
 
@@ -259,7 +260,7 @@ void _leMateriais(char *nomeArquivo)
 
 	while (!feof(fp))
 	{
-		fgets(aux, 255, fp);
+		assert(fgets(aux, 255, fp) != (char *)0x1);
 		if (strlen(aux)>1)
 			aux[strlen(aux) - 1] = 0;	// elimina o \n lido do arquivo
 		if (aux[0] == '#') continue;
@@ -396,7 +397,7 @@ OBJ *CarregaObjeto(char *nomeArquivo, bool mipmap)
 	// alocar memória depois
 	while (!feof(fp))
 	{
-		fgets(aux, 255, fp);
+		assert(fgets(aux, 255, fp) != (char *)0x1);
 		if (!strncmp(aux, "v ", 2)) // encontramos um vértice
 			obj->numVertices++;
 		if (!strncmp(aux, "f ", 2)) // encontramos uma face
@@ -453,7 +454,7 @@ OBJ *CarregaObjeto(char *nomeArquivo, bool mipmap)
 
 	while (!feof(fp))
 	{
-		fgets(aux, 255, fp);
+		assert(fgets(aux, 255, fp) != (char *)0x1);
 		aux[strlen(aux) - 1] = 0;	// elimina o \n lido do arquivo
 									// Pula comentários
 		if (aux[0] == '#') continue;
@@ -816,7 +817,7 @@ void LiberaMateriais()
 {
 	unsigned int i;
 #ifdef DEBUG
-	printf("Total de materiais: %d\n", _materiais.size());
+	printf("Total de materiais: %d\n", (int)_materiais.size());
 #endif
 	// Para cada material
 	for (i = 0; i<_materiais.size(); ++i)
@@ -834,7 +835,7 @@ void LiberaMateriais()
 	// Limpa lista
 	_materiais.clear();
 #ifdef DEBUG
-	printf("Total de texturas: %d\n", _texturas.size());
+	printf("Total de texturas: %d\n", (int)_texturas.size());
 #endif
 	// Para cada textura
 	for (i = 0; i<_texturas.size(); ++i)
@@ -868,7 +869,7 @@ void CalculaNormaisPorFace(OBJ *obj)
 			obj->vertices[obj->faces[i].vert[2]], obj->normais[i]);
 }
 
-char *nomes[] = {
+const char *nomes[] = {
 	"posx", "negx", "posy", "negy", "posz", "negz" };
 
 // Desabilita a geração de uma display list
