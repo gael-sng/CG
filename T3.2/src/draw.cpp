@@ -47,7 +47,7 @@ void drawTorus(Transform *torus){
 	glutSolidTorus(0.4, 0.7, 20.0, 20.0);
 }
 
-void drawCube(Transform *cube, bool selected){
+void drawCube(Transform *cube){
 	applyTransform(cube);
 
 	glNormal3d(0, 1, 0);

@@ -216,7 +216,7 @@ void Render(){
 	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform, true): drawTeapot(objects[i].transform, false);
 
 	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[0].transform, true): drawTeapot(objects[0].transform, false);
-	drawAirplane(objects[0].transform, true);
+	drawAirplane(objects[0].transform);
 	glLoadIdentity();
 
 	// Set the camera
@@ -232,15 +232,15 @@ void Render(){
 
     	switch(objects[i].type){
     	case TEAPOT:
-    		selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform, true): drawTeapot(objects[i].transform, false);
+    		selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform): drawTeapot(objects[i].transform);
     		break;
 
     	case TORUS:
-    		selectedObject - TORUS == 0 ? drawTorus(objects[i].transform, true): drawTorus(objects[i].transform, false);
+    		selectedObject - TORUS == 0 ? drawTorus(objects[i].transform): drawTorus(objects[i].transform);
     		break;
 
     	case CUBE:
-    		selectedObject - CUBE == 0 ? drawCube(objects[i].transform, true): drawCube(objects[i].transform, false);
+    		selectedObject - CUBE == 0 ? drawCube(objects[i].transform): drawCube(objects[i].transform);
     		break;
 
 		default:
