@@ -27,6 +27,10 @@ Camera::~Camera(){
 	delete transform;
 }
 
+bool checkSkyBox(Vector3 v){
+
+}
+
 void Camera::update(){
     glRotated(this->transform->rotation->x, 1.0, 0.0, 0.0);  // Rotate the camera around the x-axis.
     glRotated(this->transform->rotation->y, 0.0, 1.0, 0.0);  // Rotate the camera around the y-axis.
@@ -66,15 +70,8 @@ void Camera::lookRight(){
 
 void Camera::pitchUp(){
     this->transform->rotation->x -= this->rspeed;
-    checkRotation();
 }
 
 void Camera::pitchDown(){
     this->transform->rotation->x += this->rspeed;
-    checkRotation();
-}
-
-void Camera::checkRotation(){
-	this->transform->rotation->x = min(this->transform->rotation->x, 90.0);
-	this->transform->rotation->x = max(this->transform->rotation->x, -90.0);
 }

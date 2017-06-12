@@ -14,7 +14,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-
 #define PLAYER 0.2f, 0.3f, 0.6f
 #define SECONDARY_OBJECT 0.2, 0.2, 0.2
 
@@ -59,27 +58,39 @@ void drawCube(Transform *cube){
 
 void drawSky(){
 	glColor3f(0.0, 0.0, 1.0);
-	glutSolidSphere(50.0, 100, 100);
+	glutSolidSphere(75.0, 100, 100);
 }
 
 void drawGround(double height){
 	glBegin(GL_QUADS);
 
 	glColor3f(255.0, 255.0, 255.0);
-	glVertex3f(-30.0, height, -30.0);
+	glVertex3f(-75.0, height, -75.0);
 
 	glColor3f(255.0, 0.0, 255.0);
-	glVertex3f(-30.0, height, 30.0);
+	glVertex3f(-75.0, height, 75.0);
 
 	glColor3f(255.0, 255.0, 0.0);
-	glVertex3f( 30.0, height, 30.0);
+	glVertex3f(75.0, height, 75.0);
 
 	glColor3f(0.0, 255.0, 255.0);
-	glVertex3f(30.0, height, -30.0);
+	glVertex3f(75.0, height, -75.0);
 
 	glEnd();
+}
 
-	drawSky();
+void drawAxis(){
+	glColor3f(1.0, 0.0, 0.0);
+	glLineWidth(5.0f);
+
+	glBegin(GL_LINES);
+	glVertex3f(-75.0, 0.0, 0.0);
+	glVertex3f(75.0, 0.0, 0.0);
+	glVertex3f(0.0, -75.0, 0.0);
+	glVertex3f(0.0, 75.0, 0.0);
+	glVertex3f(0.0, 0.0, -75.0);
+	glVertex3f(0.0, 0.0, 75.0);
+	glEnd();
 }
 
 void drawTeapot(Transform *teapot){
@@ -95,14 +106,11 @@ void drawTeapot(Transform *teapot){
 	glPopMatrix();
 }
 
-
-
 // Apontador para objeto
 OBJ *objeto;
 
 // Função responsável por inicializar parâmetros e variáveis
-void Inicializa (void){
-
+void Inicializa(){
 	// Define a cor de fundo da janela de visualização como branca
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -127,25 +135,12 @@ void Inicializa (void){
 	obsX = obsY = 0;
 	obsZ = 500;
 
-	// Lê o nome do arquivo e chama a rotina de leitura
-	//printf("Digite o nome do arquivo que contem o modelo 3D: ");
-	//gets(nomeArquivo);
-
 	// Carrega o objeto 3D
 	objeto = CarregaObjeto((char *)"data/aviao.obj", true);
     printf("Objeto carregado!");
-
-	// E calcula o vetor normal em cada face
-	/*if(objeto->normais)
-	{
-		// Se já existirem normais no arquivo, apaga elas
-		free(objeto->normais);
-		objeto->normais_por_vertice = false;
-	}
-	CalculaNormaisPorFace(objeto);*/
 }
 
-void DefineIluminacao (void){
+void DefineIluminacao(){
 	GLfloat luzAmbiente[4]={0.2,0.2,0.2,1.0};
 	GLfloat luzDifusa[4]={1.0,1.0,1.0,1.0};	   	// "cor"
 	GLfloat luzEspecular[4]={1.0, 1.0, 1.0, 1.0};	// "brilho"
@@ -170,7 +165,6 @@ void DefineIluminacao (void){
 	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular );
 	glLightfv(GL_LIGHT0, GL_POSITION, posicaoLuz );
 }
-
 
 void drawAirplane(Transform *airplane){
 	glPushMatrix();

@@ -13,5 +13,7 @@ void applyTransform(Transform *);
 void drawTorus(Transform *);
 void drawCube(Transform *);
 void drawGround(double);
+void drawSky();
+void drawAxis();
 void drawTeapot(Transform *);
 void drawAirplane(Transform *);

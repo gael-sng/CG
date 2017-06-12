@@ -23,8 +23,9 @@
 
 #define NEXT 1
 #define PREVIOUS -1
+#define ASCII_ESC 27
 
-#define N_OBJECTS 9
+#define N_OBJECTS 8
 #define CAMERA_DIST 4
 
 #define FPS 60
@@ -32,62 +33,24 @@
 
 #define TO_RAD (M_PI / 180.0)
 
-typedef int OBJECT_TYPE;
-
 /* Each scene object contains a reference to it's transform properties
-and a OBJECT_TYPE, which is used to call the correct drawing function defined in draw.hpp */
-struct sceneObject{
+and a int, which is used to call the correct drawing function defined in draw.hpp */
+struct Entity{
 	Transform *transform;
-	OBJECT_TYPE type;
-};
-
-enum ascii_codes{
-	ASCII_NUL,
-	ASCII_SOH,
-	ASCII_STX,
-	ASCII_ETX,
-	ASCII_EOT,
-	ASCII_ENQ,
-	ASCII_ACK,
-	ASCII_BEL,
-	ASCII_BS,
-	ASCII_HT,
-	ASCII_LF,
-	ASCII_VT,
-	ASCII_FF,
-	ASCII_CR,
-	ASCII_SO,
-	ASCII_SI,
-	ASCII_DLE,
-	ASCII_DC1,
-	ASCII_DC2,
-	ASCII_DC3,
-	ASCII_DC4,
-	ASCII_NAK,
-	ASCII_SYN,
-	ASCII_ETB,
-	ASCII_CAN,
-	ASCII_EM,
-	ASCII_SUB,
-	ASCII_ESC,
-	ASCII_FS,
-	ASCII_GS,
-	ASCII_RS,
-	ASCII_US,
-	ASCII_DEL = 127
+	int type;
 };
 
 int g_WindowHandle; // Real declaration of global window handler
-int selectedObject = 0; // object that will handle transformations
-bool keys[255] = {0}; // keypress state
-bool skeys[255] = {0}; // special keypress state
+bool keys[256] = {0}; // keypress state
+bool skeys[256] = {0}; // special keypress state
 
 Camera *cam;
-sceneObject* Player;
+Entity Player;
 
 //list of scene objects.
-sceneObject objects[N_OBJECTS];
-double dist = 9.0f;
+Entity objects[N_OBJECTS];
+double dist = 50.0f;
+double offset = 25.0f;
 
 void myInit(){
 	double x, y, z;
@@ -95,103 +58,105 @@ void myInit(){
 
 	cam = new Camera();
 
-	// Object 0 is a Teapot at (0, 0, 0).
-	objects[0].transform = new Transform(0.0, -1.3, -5.0, 7.0, 180.0, 0.0, -0.9, -0.9, -0.9);
-	objects[0].type = TEAPOT;
-	Player = &objects[0];
+	Player.transform = new Transform(0.0, -1.3, -5.0, 7.0, 180.0, 0.0, -0.9, -0.9, -0.9);
+	Player.type = TEAPOT;
 
 	// Creating other objects.
 	for (i = 0; i < (1 << 3); i++){
-		x = ((1 << 0) & i) ? dist : -dist;
-		y = ((1 << 1) & i) ? dist : -dist;
-		z = ((1 << 2) & i) ? dist : -dist;
+		x = ((1 << 0) & i) ? offset : -offset;
+		y = ((1 << 1) & i) ? offset : -offset;
+		z = ((1 << 2) & i) ? offset : -offset;
 
-		objects[i + 1].transform = new Transform(x, y, z, 90.0f, 0.0f, (float)(rand()%180), 5.0, 5.0, 5.0);
-		objects[i + 1].type = TORUS;
+		objects[i].transform = new Transform(x, y, z, 90.0f, 0.0f, (GLfloat)(rand() % 180), 5.0, 5.0, 5.0);
+		objects[i].type = TORUS;
 	}
 }
 
-// function that deletes "camera" and "sceneObject" objects
+// function that deletes "camera" and "Entity" objects
 void myCleanup(){
 	int i;
 
 	delete cam;
 
-	for (i = 0; i < 3; i++){
+	for (i = 0; i < N_OBJECTS; i++){
 		delete objects[i].transform;
 	}
 }
 
-// function that processes normal button presses (such as 'w', 'a', 's' and 'd')
+// Function that processes normal button presses (such as 'w', 'a', 's' and 'd')
 void processKeys(){
-
 	// Movement
-	if(keys['w']){
+	if (keys['w'] or keys['W']){
 		cam->moveFoward();
 	}
 	
-	if(keys['s']){
+	if (keys['s'] or keys['S']){
 		cam->moveBack();
 	}
 	
-	if(keys['a']){
+	if (keys['a'] or keys['A']){
 		cam->moveLeft();
 	}
 	
-	if(keys['d']){
+	if (keys['d'] or keys['D']){
 		cam->moveRight();
 	}
 
-	if(skeys[GLUT_KEY_UP]){
+	if (skeys[GLUT_KEY_DOWN]){
 		cam->pitchUp();
 	}
 	
-	if(skeys[GLUT_KEY_DOWN]){
+	if (skeys[GLUT_KEY_UP]){
 		cam->pitchDown();
 	}
 	
-	if(skeys[GLUT_KEY_LEFT]){
+	if (skeys[GLUT_KEY_LEFT]){
 		cam->lookLeft();
 	}
 	
-	if(skeys[GLUT_KEY_RIGHT]){
+	if (skeys[GLUT_KEY_RIGHT]){
 		cam->lookRight();
 	}
+
 	// Cleanup glut before exiting
-	if(keys[ASCII_ESC]) glutDestroyWindow(g_WindowHandle), myCleanup(), exit(0);
+	if (keys[ASCII_ESC]){
+		glutDestroyWindow(g_WindowHandle);
+		myCleanup();
+		exit(0);
+	}
 }
 
 #define max_angle  15.0f
 #define angle_Speed 1.0f
 
 void Play(){
-	//inclinando o player para os lados
-	if(skeys[GLUT_KEY_RIGHT] and Player->transform->rotation->z < max_angle){
-		Player->transform->rotation->z += angle_Speed;
+	// Inclinando para a direita ou para a esquerda.
+	if (skeys[GLUT_KEY_RIGHT] and Player.transform->rotation->z < max_angle){
+		Player.transform->rotation->z += angle_Speed;
 	}
-	if(not skeys[GLUT_KEY_RIGHT] and Player->transform->rotation->z > 0.0f){
-		Player->transform->rotation->z -= angle_Speed;
+	if (not skeys[GLUT_KEY_RIGHT] and Player.transform->rotation->z > 0.0f){
+		Player.transform->rotation->z -= angle_Speed;
 	}
-	if(skeys[GLUT_KEY_LEFT] and Player->transform->rotation->z > -max_angle){
-		Player->transform->rotation->z -= angle_Speed;
+	if (skeys[GLUT_KEY_LEFT] and Player.transform->rotation->z > -max_angle){
+		Player.transform->rotation->z -= angle_Speed;
 	}
-	if(not skeys[GLUT_KEY_LEFT] and Player->transform->rotation->z < 0.0f){
-		Player->transform->rotation->z += angle_Speed;
-	}
-	//inclinando ele apra frente ou traz
-	if(skeys[GLUT_KEY_UP] and Player->transform->rotation->x < max_angle){
-		Player->transform->rotation->x += angle_Speed;
-	}
-	if(not skeys[GLUT_KEY_UP] and Player->transform->rotation->x > 0.0f){
-		Player->transform->rotation->x -= angle_Speed;
-	}
-	if(skeys[GLUT_KEY_DOWN] and Player->transform->rotation->x > -max_angle){
-		Player->transform->rotation->x -= angle_Speed;
-	}
-	if(not skeys[GLUT_KEY_DOWN] and Player->transform->rotation->x < 0.0f){
-		Player->transform->rotation->x += angle_Speed;
+	if (not skeys[GLUT_KEY_LEFT] and Player.transform->rotation->z < 0.0f){
+		Player.transform->rotation->z += angle_Speed;
 	}
 
+	// Inclinando para frente ou para trás.
+	if (skeys[GLUT_KEY_DOWN] and Player.transform->rotation->x < max_angle){
+		Player.transform->rotation->x += angle_Speed;
+	}
+	if (not skeys[GLUT_KEY_DOWN] and Player.transform->rotation->x > 0.0f){
+		Player.transform->rotation->x -= angle_Speed;
+	}
+	if (skeys[GLUT_KEY_UP] and Player.transform->rotation->x > -max_angle){
+		Player.transform->rotation->x -= angle_Speed;
+	}
+	if (not skeys[GLUT_KEY_UP] and Player.transform->rotation->x < 0.0f){
+		Player.transform->rotation->x += angle_Speed;
+	}
 }
 
 // GlutIdleFunc callback. Processes keys and redraw scene
@@ -207,45 +172,29 @@ void Update(int step){
 
 // GlutDisplayFunc callback. Clears screen and draws the scene
 void Render(){
+	int i;
+
 	// Clear Color and Depth Buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Reset transformations
 	glLoadIdentity();
-
-	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform, true): drawTeapot(objects[i].transform, false);
-
-	//selectedObject - TEAPOT == 0 ? drawTeapot(objects[0].transform, true): drawTeapot(objects[0].transform, false);
-	drawAirplane(objects[0].transform);
+	drawAirplane(Player.transform);
 	glLoadIdentity();
 
 	// Set the camera
 	cam->update();
 
-    // Draw ground
+    // Draw ground and sky
     drawGround(-dist);
+    drawSky();
+    drawAxis();
 
     // Draws scene objects
-    for(int i = 1; i < N_OBJECTS; i++){
-
+    for (i = 0; i < N_OBJECTS; i++){
 		glPushMatrix();
 
-    	switch(objects[i].type){
-    	case TEAPOT:
-    		selectedObject - TEAPOT == 0 ? drawTeapot(objects[i].transform): drawTeapot(objects[i].transform);
-    		break;
-
-    	case TORUS:
-    		selectedObject - TORUS == 0 ? drawTorus(objects[i].transform): drawTorus(objects[i].transform);
-    		break;
-
-    	case CUBE:
-    		selectedObject - CUBE == 0 ? drawCube(objects[i].transform): drawCube(objects[i].transform);
-    		break;
-
-		default:
-			break;
-		}
+    	drawTorus(objects[i].transform);
 
 		glPopMatrix();
     }
@@ -255,15 +204,14 @@ void Render(){
 }
 
 // glutReshapeFunc callback. Corrects the aspect ratio when the window size changes
-void changeSize(int w, int h) {
-
+void changeSize(int w, int h){
 	// Prevent a divide by zero, when window is too short
 	// (you cant make a window of zero width).
-	if (h == 0) h = 1;
+	if (!h){
+		h = 1;
+	}
 
-	float _w = w, _h = h;
-
-	float ratio = _w/_h;
+	float ratio = (float)w / (float)h;
 
 	// Use the Projection Matrix
 	glMatrixMode(GL_PROJECTION);
@@ -275,15 +223,23 @@ void changeSize(int w, int h) {
 	glViewport(0, 0, w, h);
 
 	// Set the correct perspective.
-	gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+	gluPerspective(45.0f, ratio, 0.1f, 200.0f);
 
 	// Get Back to the Modelview
 	glMatrixMode(GL_MODELVIEW);
 }
 
 // sets key presses when some key is pressed
-void keyboardUp(unsigned char key, int x, int y){ keys[key] = false; }
-void keyboardDown(unsigned char key, int x, int y){ keys[key] = true; }
+void keyboardUp(unsigned char key, int x, int y){
+	keys[key] = false;
+}
+void keyboardDown(unsigned char key, int x, int y){
+	keys[key] = true;
+}
 
-void specialUp(int key, int x, int y){ skeys[key] = false; }
-void specialDown(int key, int x, int y){ skeys[key] = true; }
+void specialUp(int key, int x, int y){
+	skeys[key] = false;
+}
+void specialDown(int key, int x, int y){
+	skeys[key] = true;
+}
