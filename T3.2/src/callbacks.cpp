@@ -6,6 +6,7 @@
 */
 
 #include <cmath>
+#include <stdio.h>
 #include <cstdlib>
 #include <GL/glut.h>
 
@@ -82,6 +83,7 @@ bool keys[255] = {0}; // keypress state
 bool skeys[255] = {0}; // special keypress state
 
 Camera *cam;
+sceneObject* Player;
 
 //list of scene objects.
 sceneObject objects[N_OBJECTS];
@@ -94,8 +96,9 @@ void myInit(){
 	cam = new Camera();
 
 	// Object 0 is a Teapot at (0, 0, 0).
-	objects[0].transform = new Transform(0.0, -1.0, -5.0, 0.0, 180.0, 0.0, -0.9, -0.9, -0.9);
+	objects[0].transform = new Transform(0.0, -1.3, -5.0, 7.0, 180.0, 0.0, -0.9, -0.9, -0.9);
 	objects[0].type = TEAPOT;
+	Player = &objects[0];
 
 	// Creating other objects.
 	for (i = 0; i < (1 << 3); i++){
@@ -103,8 +106,8 @@ void myInit(){
 		y = ((1 << 1) & i) ? dist : -dist;
 		z = ((1 << 2) & i) ? dist : -dist;
 
-		objects[i + 1].transform = new Transform(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-		objects[i + 1].type = (rand() % 2) + 1;
+		objects[i + 1].transform = new Transform(x, y, z, 90.0f, 0.0f, (float)(rand()%180), 5.0, 5.0, 5.0);
+		objects[i + 1].type = TORUS;
 	}
 }
 
@@ -158,10 +161,45 @@ void processKeys(){
 	if(keys[ASCII_ESC]) glutDestroyWindow(g_WindowHandle), myCleanup(), exit(0);
 }
 
+#define max_angle  15.0f
+#define angle_Speed 1.0f
+
+void Play(){
+	//inclinando o player para os lados
+	if(skeys[GLUT_KEY_RIGHT] and Player->transform->rotation->z < max_angle){
+		Player->transform->rotation->z += angle_Speed;
+	}
+	if(not skeys[GLUT_KEY_RIGHT] and Player->transform->rotation->z > 0.0f){
+		Player->transform->rotation->z -= angle_Speed;
+	}
+	if(skeys[GLUT_KEY_LEFT] and Player->transform->rotation->z > -max_angle){
+		Player->transform->rotation->z -= angle_Speed;
+	}
+	if(not skeys[GLUT_KEY_LEFT] and Player->transform->rotation->z < 0.0f){
+		Player->transform->rotation->z += angle_Speed;
+	}
+	//inclinando ele apra frente ou traz
+	if(skeys[GLUT_KEY_UP] and Player->transform->rotation->x < max_angle){
+		Player->transform->rotation->x += angle_Speed;
+	}
+	if(not skeys[GLUT_KEY_UP] and Player->transform->rotation->x > 0.0f){
+		Player->transform->rotation->x -= angle_Speed;
+	}
+	if(skeys[GLUT_KEY_DOWN] and Player->transform->rotation->x > -max_angle){
+		Player->transform->rotation->x -= angle_Speed;
+	}
+	if(not skeys[GLUT_KEY_DOWN] and Player->transform->rotation->x < 0.0f){
+		Player->transform->rotation->x += angle_Speed;
+	}
+
+}
+
 // GlutIdleFunc callback. Processes keys and redraw scene
 void Update(int step){
 	glutTimerFunc((unsigned int)DELTA_MILI_TIME, Update, step);
 	
+	Play();
+
 	processKeys();
 	
 	glutPostRedisplay();
@@ -245,7 +283,7 @@ void changeSize(int w, int h) {
 
 // sets key presses when some key is pressed
 void keyboardUp(unsigned char key, int x, int y){ keys[key] = false; }
-void keyboardDown(unsigned char key, int x, int y){keys[key] = true; }
+void keyboardDown(unsigned char key, int x, int y){ keys[key] = true; }
 
 void specialUp(int key, int x, int y){ skeys[key] = false; }
 void specialDown(int key, int x, int y){ skeys[key] = true; }

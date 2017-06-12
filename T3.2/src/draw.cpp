@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define HIGHLIGHTED 0.7f, 0.3f, 1.0f
+#define HIGHLIGHTED 0.2f, 0.3f, 0.6f
 #define NOT_HIGHLIGHTED 0.2f, 0.2f, 0.2f
 
 GLfloat angle, fAspect;
