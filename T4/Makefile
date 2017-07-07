@@ -1,5 +1,5 @@
 # Project name
-NAME=CG_T3
+NAME=CG_T4
 
 
 # Directories

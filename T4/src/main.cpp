@@ -31,13 +31,12 @@ struct Vertex
 };
 Vertex g_floorQuad[] =
 {
-	{ 0.0f, 1.0f, 0.0f, -5.0f, 0.0f, -5.0f },
-	{ 0.0f, 1.0f, 0.0f, -5.0f, 0.0f, 5.0f },
-	{ 0.0f, 1.0f, 0.0f, 5.0f, 0.0f, 5.0f },
-	{ 0.0f, 1.0f, 0.0f, 5.0f, 0.0f, -5.0f },
+	{ 0.0f, 1.0f, 0.0f, -500.0f, 0.0f, -500.0f },
+	{ 0.0f, 1.0f, 0.0f, -500.0f, 0.0f, 500.0f },
+	{ 0.0f, 1.0f, 0.0f, 500.0f, 0.0f, 500.0f },
+	{ 0.0f, 1.0f, 0.0f, 500.0f, 0.0f, -500.0f },
 };
-void init(void)
-{
+void init(void){
 	// glClearColor( 0.35f, 0.53f, 0.7f, 1.0f );
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_LIGHTING);
@@ -60,8 +59,7 @@ void init(void)
 Esta função é responsável pela construção
 da matriz de sombra.
 */
-void ConstroiMatrizSombra(float Matriz[16], float PosicaoLuz[4], float Plano[4])
-{
+void ConstroiMatrizSombra(float Matriz[16], float PosicaoLuz[4], float Plano[4]){
 	float Ponto;
 	// Calcula o ponto prodizido entre o plano e a posição da luz
 	Ponto = Plano[0] * PosicaoLuz[0] +
@@ -93,8 +91,7 @@ void ConstroiMatrizSombra(float Matriz[16], float PosicaoLuz[4], float Plano[4])
 Esta função é responsável por encontrar a
 equacao do plano com base em tres pontos
 */
-void EncontraPlano(GLfloat plano[4], GLfloat v0[3], GLfloat v1[3], GLfloat v2[3])
-{
+void EncontraPlano(GLfloat plano[4], GLfloat v0[3], GLfloat v1[3], GLfloat v2[3]){
 	GLfloat vec0[3], vec1[3];
 	// Necessicta de 2 vetores para encontrar a interseção
 	vec0[0] = v1[0] - v0[0];
@@ -113,36 +110,29 @@ void EncontraPlano(GLfloat plano[4], GLfloat v0[3], GLfloat v1[3], GLfloat v2[3]
 Efetua o desenho da superfície de projeção
 da sombra
 */
-void Superficie()
-{
+void Superficie(){
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glInterleavedArrays(GL_N3F_V3F, 0, g_floorQuad);
 	glDrawArrays(GL_QUADS, 0, 4);
 }
-/*
-Função responsável pelo desenho do objeto.
-*/
-void DesenhaObjeto(void)
-{
-	switch (objeto) {
-	case 1:
-		glRotatef(90, 1.0f, 0.0, 0.0);
-		glutSolidTorus(0.4, 0.8, 30, 35);
-		break;
-	case 2:
-		glutSolidTeapot(1.0);
-		break;
-	}
+
+void DrawObject(){
+	//Translada escala e rotaciona a sua malha aqui Times
+	glTranslatef(0.0f, 2.5f, 0.0f);
+	glRotatef(-g_fSpinY_R, 1.0f, 0.0f, 0.0f);
+	glRotatef(-g_fSpinX_R, 0.0f, 1.0f, 0.0f);
+	
+	//desenha a malha aqui Forbes
+	glutSolidTeapot(1.0);
 }
+
+
 /*
 Função responsável pelo desenho dos objetos
 bem como projeção da sombra.
 */
-void display(void)
-{
-	//
+void display(void){
 	// Define o plano da superficie planar que terá a sombra projetada.
-	//
 	GLfloat PlanoSombra[4];
 	GLfloat v0[3], v1[3], v2[3];
 	// Para definir o plano que contém a superfíces são necessários
@@ -158,104 +148,40 @@ void display(void)
 	v2[2] = g_floorQuad[2].z;
 	EncontraPlano(PlanoSombra, v0, v1, v2);
 	
-	//
 	// Constroi a matriz de sombra utilizando a posicao da luz corrente e o plano.
-	//
 	ConstroiMatrizSombra(g_shadowMatrix, g_lightPosition, PlanoSombra);
-	//
-	//
-	//
-
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(0.0f, -2.0f, -15.0f);
 	glRotatef(-g_fSpinY_L, 1.0f, 0.0f, 0.0f);
 	glRotatef(-g_fSpinX_L, 0.0f, 1.0f, 0.0f);
-	//
+
 	// Desenha superfície
-	//
 	Superficie();
 
-
-
-	
-
-
-	//
 	// Cria a sombra para o objeto utilizando a matriz de sombra
-	//
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
 	// Define a cor que a sombra terá
-	glColor3f(0.2f, 0.2f, 0.2f);
 	glPushMatrix();
-	{
-		glMultMatrixf((GLfloat *)g_shadowMatrix);
-		// Posição e orientação do objeto
-		// necessita ter as mesmas transformações
-		// utilizadas para a criação do objeto em si
-		glTranslatef(0.0f, 2.5f, 0.0f);
-		glRotatef(-g_fSpinY_R, 1.0f, 0.0f, 0.0f);
-		glRotatef(-g_fSpinX_R, 0.0f, 1.0f, 0.0f);
-		switch (objeto) {
-		case 1:
-			glRotatef(90, 1.0f, 0.0, 0.0);
-			glutSolidTorus(0.4, 0.8, 30, 35);
-			break;
-		case 2:
-			glutSolidTeapot(1.0);
-			break;
-		case 3:
-			glRotatef(90, 1.0f, 0.0, 0.0);
-			glutWireTorus(0.4, 0.8, 30, 35);
-			break;
-		case 4:
-			glutWireTeapot(1.0);
-			break;
-		}
-	}
+	glColor3f(0.2f, 0.2f, 0.2f);
+	glMultMatrixf((GLfloat *)g_shadowMatrix);
+	DrawObject();
 	glPopMatrix();
 	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 
 
-	//
 	// Cria um objeto.
-	//
 	glEnable(GL_LIGHTING);
 	glPushMatrix();
-	{
-		// Orientação e posição do objeto.
-		glTranslatef(0.0f, 2.5f, 0.0f);
-		glRotatef(-g_fSpinY_R, 1.0f, 0.0f, 0.0f);
-		glRotatef(-g_fSpinX_R, 0.0f, 1.0f, 0.0f);
-		glColor3f(1, 0, 0);
-		switch (objeto) {
-		case 1:
-			glRotatef(90, 1.0f, 0.0, 0.0);
-			glutSolidTorus(0.4, 0.8, 30, 35);
-			break;
-		case 2:
-			glutSolidTeapot(1.0);
-			break;
-		case 3:
-			glRotatef(90, 1.0f, 0.0, 0.0);
-			glutWireTorus(0.4, 0.8, 30, 35);
-			break;
-		case 4:
-			glutWireTeapot(1.0);
-			break;
-		}
-	}
+	glColor3f(1, 0, 0);
+	DrawObject();
 	glPopMatrix();
 
-
-	//
 	// Cria uma pequena esfera na posição da luz.
-	//
 	glDisable(GL_LIGHTING);
 	glPushMatrix();
 	{
@@ -266,7 +192,6 @@ void display(void)
 		glutSolidSphere(0.1, 8, 8);
 	}
 	glPopMatrix();
-	
 
 	glutSwapBuffers();
 }
@@ -279,8 +204,7 @@ Quando a tela é redimensionada os valores
 da visão perspectiva são recalculados com base no novo tamanho da tela
 assim como o Viewport
 */
-void reshape(int w, int h)
-{
+void reshape(int w, int h){
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -293,8 +217,7 @@ void reshape(int w, int h)
 quando pressionada a tecla ESC
 o programa é terminado.
 */
-void keyboard(unsigned char key, int x, int y)
-{
+void keyboard(unsigned char key, int x, int y){
 	switch (key) {
 	case 27:
 		exit(1);
@@ -305,8 +228,7 @@ void keyboard(unsigned char key, int x, int y)
 teclas especiais através do GLUT
 as setas mudam o posicionamento da luz na cena
 */
-void Special_keyboard(int key, int x, int y)
-{
+void Special_keyboard(int key, int x, int y){
 	switch (key) {
 	case GLUT_KEY_LEFT:
 		g_lightPosition[0] -= 0.1f;
@@ -344,8 +266,7 @@ static int bMousing_L;
 static PONTO_T ptLastMousePosit_R;
 static PONTO_T ptCurrentMousePosit_R;
 static int bMousing_R;
-void mouse(int button, int state, int x, int y)
-{
+void mouse(int button, int state, int x, int y){
 	switch (button) {
 	case GLUT_LEFT_BUTTON:
 		if (state == GLUT_DOWN)
@@ -384,8 +305,7 @@ void mouse(int button, int state, int x, int y)
 /*
 Obtem a posicao atual da movimentacao do mouse se algum botao esta pressionado.
 */
-void motion_mouse(int x, int y)
-{
+void motion_mouse(int x, int y){
 	ptCurrentMousePosit_L.x = x;
 	ptCurrentMousePosit_L.y = y;
 	ptCurrentMousePosit_R.x = x;
@@ -409,8 +329,7 @@ void motion_mouse(int x, int y)
 /*
 Função principal do programa.
 */
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(800, 600);
@@ -425,12 +344,13 @@ int main(int argc, char** argv)
 	F1..F12, END, DELETE,SETAS etc..
 	*/
 	glutSpecialFunc(Special_keyboard);
-	glutMouseFunc(mouse);/*
-Funcao de Callback que controla
-a posição atual do ponteiro do mouse
-se algum dos botoes (esquerdo, direito, centro)
-esta pressionado.
-*/
+	glutMouseFunc(mouse);
+	/*
+	Funcao de Callback que controla
+	a posição atual do ponteiro do mouse
+	se algum dos botoes (esquerdo, direito, centro)
+	esta pressionado.
+	*/
 	glutMotionFunc(motion_mouse);
 	glutKeyboardFunc(keyboard);
 	glutMainLoop();
