@@ -112,7 +112,7 @@ OBJ *objeto;
 // Função responsável por inicializar parâmetros e variáveis
 void Inicializa(){
 	// Define a cor de fundo da janela de visualização como branca
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Habilita a definição da cor do material a partir da cor corrente
 	glEnable(GL_COLOR_MATERIAL);
@@ -167,14 +167,14 @@ void DefineIluminacao(){
 }
 
 void drawAirplane(Transform *airplane){
-	glPushMatrix();
+	//glPushMatrix();
 
 	// Apllies transformations
-	applyTransform(airplane);
+	if(airplane != NULL)applyTransform(airplane);
 
 	// Draws obj
 	glColor3f(PLAYER);
 	DesenhaObjeto(objeto);
 
-	glPopMatrix();
+	//glPopMatrix();
 }

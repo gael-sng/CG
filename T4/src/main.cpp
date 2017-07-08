@@ -1,13 +1,18 @@
 /*
-* Criação de sombras planares.
-* Referência do Código Original: OpenGL Super Bible
-* Shadow.cpp ( página 339 )
+	Gabriel Simmel Nascimento - 9050232
+	Victor Luiz Roquete Forbes - 9293394
+	Marcos Cesar Ribeiro de Camargo - 9278045
+	José Augusto Noronha de Menezes Neto - 9293049
 */
-//#include <windows.h>
+#include <cmath>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <stdio.h>
+
+#include "callbacks.hpp"
+#include "draw.hpp"
+
 // Variaveis para controle de giro de visao
 float g_fSpinX_L = 0.0f;
 float g_fSpinY_L = -10.0f;
@@ -18,8 +23,6 @@ float g_fSpinY_R = 0.0f;
 float g_shadowMatrix[16];
 // Posição da fonte de luz no espaço
 float g_lightPosition[] = { 2.0f, 6.0f, 0.0f, 1.0f };
-// Controla o objeto a ser desenhado
-int objeto = 1;
 /*
 Variáveis para desenho da
 superfície de projeção da sombra
@@ -117,13 +120,15 @@ void Superficie(){
 }
 
 void DrawObject(){
-	//Translada escala e rotaciona a sua malha aqui Times
+	//Translada escala e rotaciona a sua malha aqui Times7
 	glTranslatef(0.0f, 2.5f, 0.0f);
 	glRotatef(-g_fSpinY_R, 1.0f, 0.0f, 0.0f);
 	glRotatef(-g_fSpinX_R, 0.0f, 1.0f, 0.0f);
+	glScalef(0.5f, 0.5f, 0.5f);
 	
 	//desenha a malha aqui Forbes
-	glutSolidTeapot(1.0);
+	drawAirplane(NULL);
+	//glutSolidTeapot(1.0);
 }
 
 
@@ -204,7 +209,9 @@ Quando a tela é redimensionada os valores
 da visão perspectiva são recalculados com base no novo tamanho da tela
 assim como o Viewport
 */
+int W, H;
 void reshape(int w, int h){
+	printf("reshaping...\n");
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -212,17 +219,42 @@ void reshape(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	W = w;
+	H = h;
 }
+void changeZoon(GLfloat D){
+	printf("changeZoon...\n");
+	glViewport(0, 0, (GLsizei)W, (GLsizei)H);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(D, (GLfloat)W / (GLfloat)H, 0.1, 100.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+}
+
 /* Função responsável pelo controle de teclado
 quando pressionada a tecla ESC
 o programa é terminado.
 */
+GLfloat angulo = 45.0f;
 void keyboard(unsigned char key, int x, int y){
+	printf("key = %c\n", key);
 	switch (key) {
 	case 27:
 		exit(1);
 		break;
+	case 'w':
+		angulo += 2.5;
+		changeZoon(angulo);
+		break;
+	case 's':
+		angulo -= 2.5;
+		changeZoon(angulo);
+		break;
 	}
+	glutPostRedisplay();
 }
 /* Função responsável pelo controle das
 teclas especiais através do GLUT
@@ -280,12 +312,6 @@ void mouse(int button, int state, int x, int y){
 		glutPostRedisplay();
 		break;
 	case GLUT_MIDDLE_BUTTON:
-		if (state == GLUT_DOWN)
-		{
-			objeto = objeto + 1; if (objeto > 4)
-				objeto = 1;
-			glutPostRedisplay();
-		}
 		break;
 	case GLUT_RIGHT_BUTTON:
 		if (state == GLUT_DOWN)
@@ -331,9 +357,9 @@ Função principal do programa.
 */
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(800, 600);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(800, 600);
 	glutCreateWindow("Exemplo 12 - Sombras Planares");
 	init();
 	glutDisplayFunc(display);
@@ -343,6 +369,7 @@ int main(int argc, char** argv){
 	pressionamento de teclas especiais
 	F1..F12, END, DELETE,SETAS etc..
 	*/
+	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(Special_keyboard);
 	glutMouseFunc(mouse);
 	/*
@@ -352,9 +379,9 @@ int main(int argc, char** argv){
 	esta pressionado.
 	*/
 	glutMotionFunc(motion_mouse);
-	glutKeyboardFunc(keyboard);
+	Inicializa();
 	glutMainLoop();
-	return 0;
+	return 1;
 }
 
 /*
