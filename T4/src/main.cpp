@@ -121,10 +121,10 @@ void Superficie(){
 
 void DrawObject(){
 	//Translada escala e rotaciona a sua malha aqui Times7
-	glTranslatef(0.0f, 2.5f, 0.0f);
+	glTranslatef(0.0f, 3.0f, 0.0f);
 	glRotatef(-g_fSpinY_R, 1.0f, 0.0f, 0.0f);
 	glRotatef(-g_fSpinX_R, 0.0f, 1.0f, 0.0f);
-	glScalef(0.5f, 0.5f, 0.5f);
+	glScalef(0.25f, 0.25f, 0.25f);
 	
 	//desenha a malha aqui Forbes
 	drawAirplane(NULL);
@@ -211,7 +211,6 @@ assim como o Viewport
 */
 int W, H;
 void reshape(int w, int h){
-	printf("reshaping...\n");
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -223,7 +222,6 @@ void reshape(int w, int h){
 	H = h;
 }
 void changeZoon(GLfloat D){
-	printf("changeZoon...\n");
 	glViewport(0, 0, (GLsizei)W, (GLsizei)H);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -240,17 +238,16 @@ o programa é terminado.
 */
 GLfloat angulo = 45.0f;
 void keyboard(unsigned char key, int x, int y){
-	printf("key = %c\n", key);
 	switch (key) {
 	case 27:
 		exit(1);
 		break;
-	case 'w':
-		angulo += 2.5;
+	case 's':
+		if(angulo < 170.0f)angulo += 2.5;
 		changeZoon(angulo);
 		break;
-	case 's':
-		angulo -= 2.5;
+	case 'w':
+		if(angulo > 15)angulo -= 2.5;
 		changeZoon(angulo);
 		break;
 	}
@@ -383,57 +380,3 @@ int main(int argc, char** argv){
 	glutMainLoop();
 	return 1;
 }
-
-/*
-	Gabriel Simmel Nascimento - 9050232
-	Victor Luiz Roquete Forbes - 9293394
-	Marcos Cesar Ribeiro de Camargo - 9278045
-	José Augusto Noronha de Menezes Neto - 9293049
-
-#include <cmath>
-#include <GL/glut.h>
-
-#include "callbacks.hpp"
-
-#define M 1400
-#define N 900
-
-int main(int argc, char *argv[]) {
-	// Initializing camera and objects.
-	myInit();
-
-	// Initializing GLUT and Window.
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(M, N);
-	g_WindowHandle = glutCreateWindow("T3");
-
-	// Callbacks.
-	glutDisplayFunc(Render);
-	glutReshapeFunc(changeSize);
-	glutTimerFunc(0, Update, 0);
-	glutKeyboardFunc(keyboardDown);
-	glutKeyboardUpFunc(keyboardUp);
-	glutSpecialFunc(specialDown);
-	glutSpecialUpFunc(specialUp);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-    
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-	// OpenGL init
-	glEnable(GL_DEPTH_TEST);
-
-	// Carrega objeto
-	Inicializa();
-
-	// Enter GLUT event processing cycle
-	glutMainLoop();
-
-	return 1;
-}
-
-*/
